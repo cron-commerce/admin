@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@shopify/koa-shopify-auth": "^3.1.5",
+    "@shopify/polaris": "^2.12.1",
     "isomorphic-fetch": "^2.2.1",
     "koa": "^2.5.3",
     "koa-logger": "^3.2.0",

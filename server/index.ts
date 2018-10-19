@@ -17,9 +17,15 @@ const apiKey = process.env.SHOPIFY_APP_KEY
 const scopes = ['read_products', 'write_products']
 const secret = process.env.SHOPIFY_APP_SECRET
 
-nextApp.prepare().then(() => {
-  const app = new Koa()
+const serve = () => async (ctx) => {
+  await handle(ctx.req, ctx.res)
+  ctx.respond = false
+}
 
+const main = async () => {
+  await nextApp.prepare()
+
+  const app = new Koa()
   app.keys = [secret]
 
   app
@@ -27,9 +33,8 @@ nextApp.prepare().then(() => {
   .use(session(app))
   .use(shopifyAuth({afterAuth, apiKey, scopes, secret}))
   .use(verifyRequest())
-  .use(async (ctx) => {
-    await handle(ctx.req, ctx.res)
-    ctx.respond = false
-  })
+  .use(serve())
   .listen(port)
-})
+}
+
+main()
