@@ -1,10 +1,10 @@
 import 'isomorphic-fetch'
 
+import shopifyAuth, {verifyRequest} from '@shopify/koa-shopify-auth'
 import * as Koa from 'koa'
 import * as logger from 'koa-logger'
 import * as session from 'koa-session'
 import * as next from 'next'
-import shopifyAuth, {verifyRequest} from '@shopify/koa-shopify-auth'
 
 import afterAuth from './after-auth'
 

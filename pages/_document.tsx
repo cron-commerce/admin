@@ -1,7 +1,7 @@
 import NextDocument, {Head, Main, NextScript} from 'next/document'
 
 export default class Document extends NextDocument {
-  render() {
+  public render() {
     return (
       <html>
         <Head>
