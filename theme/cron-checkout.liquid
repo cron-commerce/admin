@@ -1,0 +1,28 @@
+<script type="text/javascript">
+  CRON = window.CRON || {};
+  CRON.checkout = function(e) {
+    e.preventDefault();
+    fetch('/cart.js').then(function(res) {
+      return res.json();
+    }).then(function(cart) {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://92879420.ngrok.io/';
+
+      var shopNameField = document.createElement('input');
+      shopNameField.setAttribute('type', 'hidden');
+      shopNameField.setAttribute('name', 'shopName');
+      shopNameField.setAttribute('value', '{{ shop.domain }}');
+      form.appendChild(shopNameField);
+
+      var cartField = document.createElement('input');
+      cartField.setAttribute('type', 'hidden');
+      cartField.setAttribute('name', 'cart');
+      cartField.setAttribute('value', encodeURIComponent(JSON.stringify(cart)));
+      form.appendChild(cartField);
+
+      document.getElementsByTagName('body')[0].appendChild(form);
+      form.submit();
+    });
+  };
+</script>
