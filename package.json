@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config server/index.ts",
+    "ngrok": "node -r dotenv/config ngrok.js",
+    "dev-server": "nodemon -r dotenv/config server/index.ts",
+    "dev": "run-p ngrok dev-server",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "node .next/production-server/index.js"
   },
@@ -27,7 +29,9 @@
     "@types/react": "^16.4.18",
     "@zeit/next-typescript": "^1.1.1",
     "dotenv": "^6.1.0",
+    "ngrok": "^3.1.0",
     "nodemon": "^1.18.4",
+    "npm-run-all": "^4.1.3",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0"
   }

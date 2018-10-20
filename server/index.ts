@@ -8,7 +8,7 @@ import * as next from 'next'
 
 import afterAuth from './after-auth'
 
-const port = parseInt(process.env.PORT, 10) || 3001
+const port = parseInt(process.env.PORT, 10)
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({dev})
 const handle = nextApp.getRequestHandler()
