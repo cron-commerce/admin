@@ -24,16 +24,14 @@ export default (app: Koa) => {
       body.append('code', ctx.query.code)
       body.append('grant_type', 'authorization_code')
 
-      const res = await fetch('https://connect.stripe.com/oauth/token', {
-        body,
-        method: 'POST',
-      })
+      const res = await fetch('https://connect.stripe.com/oauth/token', {body, method: 'POST'})
       const json = await res.json()
 
       await apolloClient.mutate({
         mutation,
         variables: {
           input: {
+            stripePublishableKey: json.stripe_publishable_key,
             stripeUserId: json.stripe_user_id,
           },
           name: ctx.session.shop,
