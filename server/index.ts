@@ -14,7 +14,7 @@ const nextApp = next({dev})
 const handle = nextApp.getRequestHandler()
 
 const apiKey = process.env.SHOPIFY_APP_KEY
-const scopes = ['read_products', 'write_products']
+const scopes = ['read_products']
 const secret = process.env.SHOPIFY_APP_SECRET
 
 const serve = () => async (ctx) => {
