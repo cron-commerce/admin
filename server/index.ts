@@ -7,6 +7,7 @@ import * as session from 'koa-session'
 import * as next from 'next'
 
 import afterAuth from './after-auth'
+import addStripeOauth from './stripe-oauth'
 
 const port = parseInt(process.env.PORT, 10)
 const dev = process.env.NODE_ENV !== 'production'
@@ -31,6 +32,10 @@ const main = async () => {
   app
   .use(logger('dev'))
   .use(session(app))
+
+  addStripeOauth(app)
+
+  app
   .use(shopifyAuth({afterAuth, apiKey, scopes, secret}))
   .use(verifyRequest())
   .use(serve())
