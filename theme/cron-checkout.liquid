@@ -21,6 +21,12 @@
       cartField.setAttribute('value', encodeURIComponent(JSON.stringify(cart)));
       form.appendChild(cartField);
 
+      var cartUrlField = document.createElement('input');
+      cartUrlField.setAttribute('type', 'hidden');
+      cartUrlField.setAttribute('name', 'cartUrl');
+      cartUrlField.setAttribute('value', window.location.href);
+      form.appendChild(cartUrlField);
+
       document.getElementsByTagName('body')[0].appendChild(form);
       form.submit();
     });
