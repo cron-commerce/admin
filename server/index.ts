@@ -7,6 +7,7 @@ import * as session from 'koa-session'
 import * as next from 'next'
 
 import afterAuth from './after-auth'
+import prepareSession from './prepare-session'
 import addStripeOauth from './stripe-oauth'
 
 const port = parseInt(process.env.PORT, 10)
@@ -32,6 +33,7 @@ const main = async () => {
   app
   .use(logger('dev'))
   .use(session(app))
+  .use(prepareSession())
 
   addStripeOauth(app)
 
