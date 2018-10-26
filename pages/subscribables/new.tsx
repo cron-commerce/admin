@@ -1,4 +1,5 @@
-import {Button, Form, FormLayout, Heading, Page, ResourcePicker, Select} from '@shopify/polaris'
+import {Button, Form, FormLayout, Heading, Page, Select} from '@shopify/polaris'
+import {ResourcePicker} from '@shopify/polaris/embedded'
 import gql from 'graphql-tag'
 import {Component} from 'react'
 import {Query} from 'react-apollo'
@@ -47,7 +48,6 @@ export default class NewSubscribable extends Component<{}> {
               open={this.state.isProductsPickerOpen}
               onSelection={this.handleProductsPickerSelection}
               onCancel={this.handleProductsPickerCancel}
-              resourceType='Product'
             />
             <Button onClick={this.handleOpenProductsPicker}>Choose products</Button>
 

@@ -13,8 +13,26 @@ interface Props {
 }
 
 class App extends NextApp<Props> {
+  public static async getInitialProps({Component, ctx}) {
+    let pageProps = {}
+
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx)
+    }
+
+    const shopOrigin = ctx.req ? ctx.req.session.shop : undefined
+
+    return {pageProps, shopOrigin}
+  }
+
   public state = {
+    shopOrigin: '',
     shouldRenderPolaris: false,
+  }
+
+  constructor(props) {
+    super(props)
+    this.state.shopOrigin = props.shopOrigin
   }
 
   public componentDidMount() {
@@ -27,7 +45,12 @@ class App extends NextApp<Props> {
 
     return <Container>
       <ApolloProvider client={apolloClient}>
-        {this.state.shouldRenderPolaris && <AppProvider apiKey={publicRuntimeConfig.SHOPIFY_APP_KEY} forceRedirect linkComponent={Link}>
+        {this.state.shouldRenderPolaris && <AppProvider
+          apiKey={publicRuntimeConfig.SHOPIFY_APP_KEY}
+          forceRedirect
+          linkComponent={Link}
+          shopOrigin={'https://' + this.state.shopOrigin}
+        >
           <Component {...pageProps} />
         </AppProvider>}
       </ApolloProvider>
