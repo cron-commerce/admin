@@ -27,7 +27,7 @@ class App extends NextApp<Props> {
 
     return <Container>
       <ApolloProvider client={apolloClient}>
-        {this.state.shouldRenderPolaris && <AppProvider apiKey={publicRuntimeConfig.SHOPIFY_APP_KEY} linkComponent={Link}>
+        {this.state.shouldRenderPolaris && <AppProvider apiKey={publicRuntimeConfig.SHOPIFY_APP_KEY} forceRedirect linkComponent={Link}>
           <Component {...pageProps} />
         </AppProvider>}
       </ApolloProvider>
