@@ -1,10 +1,10 @@
-import {Button, Form, FormLayout, Heading, Page, TextField} from '@shopify/polaris'
+import {Button, Form, FormLayout, Heading, Page, ResourcePicker, Select} from '@shopify/polaris'
 import gql from 'graphql-tag'
 import {Component} from 'react'
 import {Query} from 'react-apollo'
 
 import Header from '../../components/header'
-import {handleInputChangeToStateUpdate} from '../../lib/update-state'
+import updateState from '../../lib/update-state'
 
 const QUERY = gql`
   query newSubscribableOptions {
@@ -16,17 +16,15 @@ const QUERY = gql`
 
 export default class NewSubscribable extends Component<{}> {
   public state = {
-    nameInput: '',
+    isProductsPickerOpen: false,
+    typeInput: '',
   }
-
-  private handleInputChangeToStateUpdate = handleInputChangeToStateUpdate.bind(this)
 
   public render() {
     return <Query query={QUERY}>
       {({data, loading}) => {
         if (loading) { return <div>Loading...</div> }
-
-        console.log(data)
+        const {newSubscribableOptions} = data
 
         return <Page title='New Subscribable'>
           <Header />
@@ -35,14 +33,36 @@ export default class NewSubscribable extends Component<{}> {
 
           <Form onSubmit={this.handleSubmit}>
             <FormLayout>
-              <TextField label='name' onChange={this.handleInputChangeToStateUpdate('nameInput')} type='text' value={this.state.nameInput} />
+              <Select
+                label='Type'
+                onChange={this.handleTypeChange}
+                options={newSubscribableOptions.types}
+                placeholder='Select a type'
+                value={this.state.typeInput}
+              />
             </FormLayout>
+
+            <ResourcePicker
+              allowMultiple={this.state.typeInput === 'Bundle'}
+              open={this.state.isProductsPickerOpen}
+              onSelection={this.handleProductsPickerSelection}
+              onCancel={this.handleProductsPickerCancel}
+              resourceType='Product'
+            />
+            <Button onClick={this.handleOpenProductsPicker}>Choose products</Button>
+
             <Button submit>Submit</Button>
           </Form>
         </Page>
       }}
     </Query>
   }
+
+  private handleOpenProductsPicker = () => this.setState(updateState({isProductsPickerOpen: true}))
+  private handleProductsPickerCancel = () => this.setState(updateState({isProductsPickerOpen: false}))
+  private handleProductsPickerSelection = p => console.log(p)
+
+  private handleTypeChange = (typeInput: string) => this.setState(updateState({typeInput}))
 
   private handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
