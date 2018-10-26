@@ -1,11 +1,6 @@
 import NextDocument, {Head, Main, NextScript} from 'next/document'
 
 export default class Document extends NextDocument {
-  public static getInitialProps = async (ctx) => {
-    const initialProps = await NextDocument.getInitialProps(ctx)
-    return {shopOrigin: ctx.req.session.shop, ...initialProps}
-  }
-
   public render() {
     return (
       <html>
