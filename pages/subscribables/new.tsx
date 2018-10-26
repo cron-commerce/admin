@@ -18,6 +18,7 @@ const QUERY = gql`
 export default class NewSubscribable extends Component<{}> {
   public state = {
     isProductsPickerOpen: false,
+    productsInput: [],
     typeInput: '',
   }
 
@@ -41,15 +42,17 @@ export default class NewSubscribable extends Component<{}> {
                 placeholder='Select a type'
                 value={this.state.typeInput}
               />
-            </FormLayout>
 
-            <ResourcePicker
-              allowMultiple={this.state.typeInput === 'Bundle'}
-              open={this.state.isProductsPickerOpen}
-              onSelection={this.handleProductsPickerSelection}
-              onCancel={this.handleProductsPickerCancel}
-            />
-            <Button onClick={this.handleOpenProductsPicker}>Choose products</Button>
+              <div>Products: {this.state.productsInput.map(product => product.title).join(', ')}</div>
+              <ResourcePicker
+                allowMultiple={this.state.typeInput === 'Bundle'}
+                open={this.state.isProductsPickerOpen}
+                onSelection={this.handleProductsPickerSelection}
+                onCancel={this.handleProductsPickerCancel}
+                products
+              />
+              <Button onClick={this.handleOpenProductsPicker}>Choose products</Button>
+            </FormLayout>
 
             <Button submit>Submit</Button>
           </Form>
@@ -58,9 +61,13 @@ export default class NewSubscribable extends Component<{}> {
     </Query>
   }
 
+  private closeProductsPicker = () => this.setState(updateState({isProductsPickerOpen: false}))
   private handleOpenProductsPicker = () => this.setState(updateState({isProductsPickerOpen: true}))
-  private handleProductsPickerCancel = () => this.setState(updateState({isProductsPickerOpen: false}))
-  private handleProductsPickerSelection = p => console.log(p)
+  private handleProductsPickerCancel = () => this.closeProductsPicker()
+  private handleProductsPickerSelection = ({products: productsInput}) => {
+    this.setState(updateState({productsInput}))
+    this.closeProductsPicker()
+  }
 
   private handleTypeChange = (typeInput: string) => this.setState(updateState({typeInput}))
 
