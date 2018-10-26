@@ -1,4 +1,4 @@
-import {Button, Form, FormLayout, Heading, Page, Select} from '@shopify/polaris'
+import {Button, Form, FormLayout, Heading, Page, Select, TextField} from '@shopify/polaris'
 import {ResourcePicker} from '@shopify/polaris/embedded'
 import gql from 'graphql-tag'
 import {Component} from 'react'
@@ -16,9 +16,15 @@ const QUERY = gql`
 `
 
 export default class NewSubscribable extends Component<{}> {
-  public state = {
+  public state: {
+    isProductsPickerOpen: boolean,
+    productsInput: any,
+    sizesInput: SubscribableSize[],
+    typeInput: string,
+  } = {
     isProductsPickerOpen: false,
     productsInput: [],
+    sizesInput: [],
     typeInput: '',
   }
 
@@ -52,6 +58,13 @@ export default class NewSubscribable extends Component<{}> {
                 products
               />
               <Button onClick={this.handleOpenProductsPicker}>Choose products</Button>
+
+              <div>Sizes</div>
+              {this.state.sizesInput.map(size => <div key={size.numVariants}>
+                <TextField label='Size' name='size' onChange={() => null} type='number' value={`${size.numVariants}`} />
+                <TextField label='Size' name='size' onChange={() => null} type='number' value={`${size.numVariants}`} />
+              </div>)}
+              <Button onClick={this.handleAddSizeClick}>Add size</Button>
             </FormLayout>
 
             <Button submit>Submit</Button>
@@ -67,6 +80,12 @@ export default class NewSubscribable extends Component<{}> {
   private handleProductsPickerSelection = ({products: productsInput}) => {
     this.setState(updateState({productsInput}))
     this.closeProductsPicker()
+  }
+
+  private handleAddSizeClick = () => {
+    const {sizesInput} = this.state
+    sizesInput.push({numVariants: 1, price: 0})
+    this.setState(updateState({sizesInput}))
   }
 
   private handleTypeChange = (typeInput: string) => this.setState(updateState({typeInput}))
