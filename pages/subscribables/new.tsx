@@ -1,5 +1,6 @@
-import {Button, Form, FormLayout, Heading, Page, Select, TextField} from '@shopify/polaris'
+import {Button, Heading, Page, Select, TextField} from '@shopify/polaris'
 import {ResourcePicker} from '@shopify/polaris/embedded'
+import {Field, FieldArray, Form, Formik} from 'formik'
 import gql from 'graphql-tag'
 import {Component} from 'react'
 import {Query} from 'react-apollo'
@@ -16,16 +17,8 @@ const QUERY = gql`
 `
 
 export default class NewSubscribable extends Component<{}> {
-  public state: {
-    isProductsPickerOpen: boolean,
-    productsInput: any,
-    sizesInput: SubscribableSize[],
-    typeInput: string,
-  } = {
+  public state = {
     isProductsPickerOpen: false,
-    productsInput: [],
-    sizesInput: [],
-    typeInput: '',
   }
 
   public render() {
@@ -39,36 +32,68 @@ export default class NewSubscribable extends Component<{}> {
 
           <Heading>New Subscribable</Heading>
 
-          <Form onSubmit={this.handleSubmit}>
-            <FormLayout>
+          <Formik
+            initialValues={{
+              products: [],
+              sizes: [],
+              type: '',
+            }}
+            onSubmit={(p) => {
+              console.log(p)
+            }}
+            render={({
+              handleChange,
+              setFieldValue,
+              values,
+            }) => <Form>
               <Select
                 label='Type'
-                onChange={this.handleTypeChange}
+                name='type'
+                onChange={val => setFieldValue('type', val)}
                 options={newSubscribableOptions.types}
                 placeholder='Select a type'
-                value={this.state.typeInput}
+                value={values.type}
               />
 
-              <div>Products: {this.state.productsInput.map(product => product.title).join(', ')}</div>
+              <div>Products: {values.products.map(product => product.title).join(', ')}</div>
               <ResourcePicker
-                allowMultiple={this.state.typeInput === 'Bundle'}
+                allowMultiple={values.type === 'Bundle'}
                 open={this.state.isProductsPickerOpen}
-                onSelection={this.handleProductsPickerSelection}
-                onCancel={this.handleProductsPickerCancel}
+                onSelection={this.handleProductsPickerSelection(setFieldValue)}
+                onCancel={this.closeProductsPicker}
                 products
               />
               <Button onClick={this.handleOpenProductsPicker}>Choose products</Button>
 
-              <div>Sizes</div>
-              {this.state.sizesInput.map(size => <div key={size.numVariants}>
-                <TextField label='Size' name='size' onChange={() => null} type='number' value={`${size.numVariants}`} />
-                <TextField label='Size' name='size' onChange={() => null} type='number' value={`${size.numVariants}`} />
-              </div>)}
-              <Button onClick={this.handleAddSizeClick}>Add size</Button>
-            </FormLayout>
+              <FieldArray
+                name='sizes'
+                render={({push, remove}) => <div>
+                  {values.sizes.map((size, idx) => <div key={idx}>
+                    <TextField
+                      label='Size'
+                      name='numVariants'
+                      onChange={numVariants => setFieldValue(`sizes.${idx}.numVariants`, numVariants)}
+                      type='number'
+                      value={size.numVariants}
+                    />
+                    <TextField
+                      label='Price'
+                      name='price'
+                      onChange={price => setFieldValue(`sizes.${idx}.price`, price)}
+                      type='text'
+                      value={size.price}
+                    />
+                    <Button onClick={() => remove(idx)}>Remove size</Button>
+                  </div>)}
+                  <Button onClick={() => push({numVariants: '', price: ''})}>Add size</Button>
+                </div>}
+              />
 
-            <Button submit>Submit</Button>
-          </Form>
+              <div>
+                <Button submit>Submit</Button>
+              </div>
+            </Form>}
+          />
         </Page>
       }}
     </Query>
@@ -76,21 +101,8 @@ export default class NewSubscribable extends Component<{}> {
 
   private closeProductsPicker = () => this.setState(updateState({isProductsPickerOpen: false}))
   private handleOpenProductsPicker = () => this.setState(updateState({isProductsPickerOpen: true}))
-  private handleProductsPickerCancel = () => this.closeProductsPicker()
-  private handleProductsPickerSelection = ({products: productsInput}) => {
-    this.setState(updateState({productsInput}))
+  private handleProductsPickerSelection = (setFieldValue) => ({products}) => {
+    setFieldValue('products', products)
     this.closeProductsPicker()
-  }
-
-  private handleAddSizeClick = () => {
-    const {sizesInput} = this.state
-    sizesInput.push({numVariants: 1, price: 0})
-    this.setState(updateState({sizesInput}))
-  }
-
-  private handleTypeChange = (typeInput: string) => this.setState(updateState({typeInput}))
-
-  private handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
   }
 }
