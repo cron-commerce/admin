@@ -7,23 +7,26 @@ const {publicRuntimeConfig} = getConfig()
 
 let apolloClient = null
 
-const create = (initialState) => new ApolloClient({
+const create = (initialState, opts) => new ApolloClient({
   cache: new InMemoryCache().restore(initialState || {}),
   connectToDevTools: isBrowser,
   link: new HttpLink({
     credentials: 'same-origin',
+    headers: {
+      'X-Shop': opts.shopName,
+    },
     uri: publicRuntimeConfig.CORE_GRAPHQL_URL,
   }),
   ssrMode: !isBrowser,
 })
 
-export default (initialState?) => {
+export default (initialState, opts) => {
   if (!isBrowser) {
-    return create(initialState)
+    return create(initialState, opts)
   }
 
   if (!apolloClient) {
-    apolloClient = create(initialState)
+    apolloClient = create(initialState, opts)
   }
 
   return apolloClient

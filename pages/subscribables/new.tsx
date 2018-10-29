@@ -16,11 +16,22 @@ const QUERY = gql`
   }`
 
 const MUTATION = gql`
-  mutation createSubscribable($shopName: String!, $input: SubscribableInput) {
-    createSubscribable(shopName: $shopName, input: $input) {
+  mutation createSubscribable($input: SubscribableInput!) {
+    createSubscribable(input: $input) {
       id
     }
   }`
+
+const transformInputForMutation = input => ({
+  products: input.products.map(product => ({
+    shopifyProductId: product.id,
+  })),
+  sizes: input.sizes.map(size => ({
+    numVariants: parseInt(size.numVariants, 10),
+    price: size.price,
+  })),
+  type: input.type,
+})
 
 export default class NewSubscribable extends Component<{}> {
   public state = {
@@ -46,8 +57,8 @@ export default class NewSubscribable extends Component<{}> {
                   sizes: [],
                   type: '',
                 }}
-                onSubmit={variables => {
-                  createSubscribable({variables})
+                onSubmit={input => {
+                  createSubscribable({variables: {input: transformInputForMutation(input)}})
                 }}
                 render={({
                   handleChange,
