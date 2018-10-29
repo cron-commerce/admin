@@ -10,6 +10,7 @@ import withApollo from '../lib/with-apollo'
 
 interface Props {
   apolloClient: any,
+  shopName: string,
 }
 
 class App extends NextApp<Props> {
@@ -20,19 +21,13 @@ class App extends NextApp<Props> {
       pageProps = await Component.getInitialProps(ctx)
     }
 
-    const shopOrigin = ctx.req ? ctx.req.session.shop : undefined
+    const shopName = ctx.req ? ctx.req.session.shop : window.shopName
 
-    return {pageProps, shopOrigin}
+    return {pageProps, shopName}
   }
 
   public state = {
-    shopOrigin: '',
     shouldRenderPolaris: false,
-  }
-
-  constructor(props) {
-    super(props)
-    this.state.shopOrigin = props.shopOrigin
   }
 
   public componentDidMount() {
@@ -49,7 +44,7 @@ class App extends NextApp<Props> {
           apiKey={publicRuntimeConfig.SHOPIFY_APP_KEY}
           forceRedirect
           linkComponent={Link}
-          shopOrigin={'https://' + this.state.shopOrigin}
+          shopOrigin={`https://${this.props.shopName}`}
         >
           <Component {...pageProps} />
         </AppProvider>}
