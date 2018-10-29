@@ -5,11 +5,11 @@ import {URLSearchParams} from 'url'
 import apolloClient from './apollo-client'
 
 const mutation = gql`
-mutation updateShop($name: String!, $input: ShopInput) {
-  updateShop(name: $name, input: $input) {
-    id
-  }
-}`
+  mutation updateShop($name: String!, $input: ShopInput) {
+    updateShop(name: $name, input: $input) {
+      id
+    }
+  }`
 
 export default (app: Koa) => {
   app.use(async (ctx: Koa.Context, next: () => any) => {
