@@ -23,6 +23,7 @@ const MUTATION = gql`
   }`
 
 const transformInputForMutation = input => ({
+  path: input.path,
   products: input.products.map(product => ({
     shopifyProductId: product.id,
   })),
@@ -52,19 +53,20 @@ export default class NewSubscribable extends Component<{}> {
               <Heading>New Subscribable</Heading>
 
               <Formik
-                initialValues={{
-                  products: [],
-                  sizes: [],
-                  type: '',
-                }}
+                initialValues={{path: '', products: [], sizes: [], type: ''}}
                 onSubmit={input => {
                   createSubscribable({variables: {input: transformInputForMutation(input)}})
                 }}
-                render={({
-                  handleChange,
-                  setFieldValue,
-                  values,
-                }) => <Form>
+                render={({setFieldValue, values}) => <Form>
+                  <TextField
+                    helpText={`Available at /tools/subscribe/${values.path}`}
+                    label='Path'
+                    name='path'
+                    onChange={val => setFieldValue('path', val)}
+                    type='text'
+                    value={values.path}
+                  />
+
                   <Select
                     label='Type'
                     name='type'
