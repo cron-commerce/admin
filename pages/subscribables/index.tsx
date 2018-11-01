@@ -8,9 +8,6 @@ const QUERY = gql`
   query subscribables {
     subscribables {
       id
-      products {
-        shopifyProductId
-      }
       sizes {
         id
         numVariants
