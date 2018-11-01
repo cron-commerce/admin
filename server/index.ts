@@ -15,6 +15,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({dev})
 const handle = nextApp.getRequestHandler()
 
+const accessMode = 'offline'
 const apiKey = process.env.SHOPIFY_APP_KEY
 const scopes = ['read_products', 'read_orders', 'write_orders']
 const secret = process.env.SHOPIFY_APP_SECRET
@@ -38,7 +39,7 @@ const main = async () => {
   addStripeOauth(app)
 
   app
-  .use(shopifyAuth({afterAuth, apiKey, scopes, secret}))
+  .use(shopifyAuth({accessMode, afterAuth, apiKey, scopes, secret}))
   .use(verifyRequest())
   .use(serve())
   .listen(port)
